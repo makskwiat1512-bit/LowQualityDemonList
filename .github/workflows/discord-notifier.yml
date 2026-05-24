@@ -48,14 +48,14 @@ jobs:
                -X POST \
                -d '{
                  "embeds": [{
-                   "title": "🔥 New Demon Added to the List! 🔥",
+                   "title": "New Demon Added to the List!",
                    "color": 15418782,
-                   "description": "🏆 **${{ steps.parse_level.outputs.name }}** has been officially placed on the list!",
+                   "description": " **${{ steps.parse_level.outputs.name }}** has been officially placed on the list!",
                    "fields": [
                      { "name": "Creator / Author", "value": "${{ steps.parse_level.outputs.author }}", "inline": true },
                      { "name": "Verifier", "value": "${{ steps.parse_level.outputs.verifier }}", "inline": true },
                      { "name": "Verification Proof", "value": "${{ steps.parse_level.outputs.video }}" }
                    ],
-                   "footer": { "text": "Cloudflare Pages Site Updated Successfully" }
+                   "footer": { "text": "Enjoy playing this level! (or dont!)" }
                  }]
                }' $DISCORD_WEBHOOK
