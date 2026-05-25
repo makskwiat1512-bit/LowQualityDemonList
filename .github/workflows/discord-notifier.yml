@@ -31,7 +31,7 @@ jobs:
           LEVEL_NAME=$(jq -r '.name // "Unnamed Level"' "$FILE_CHANGED")
           AUTHOR=$(jq -r '.author // "Unknown Creator"' "$FILE_CHANGED")
           VERIFIER=$(jq -r '.verifier // "Unknown Verifier"' "$FILE_CHANGED")
-          VIDEO=$(jq -r '.verification // .video // "No video available"' "$FILE_CHANGED")
+          VIDEO=$(jq -r '.verification // .video // .verifierKey // "No video available"' "$FILE_CHANGED")
 
           # Save tracking info for the Discord step
           echo "name=$LEVEL_NAME" >> $GITHUB_OUTPUT
@@ -47,16 +47,21 @@ jobs:
           curl -H "Content-Type: application/json" \
                -X POST \
                -d '{
+                 "content": "<@&PASTE_YOUR_COPIED_ROLE_ID_HERE>",
+                 "allowed_mentions": {
+                   "parse": ["roles"]
+                 },
                  "embeds": [{
-                 "content": "<@&1508176598078193775>",
                    "title": "New Demon Added to the List!",
                    "color": 15418782,
-                   "description": " **${{ steps.parse_level.outputs.name }}** has been officially placed on the list!",
+                   "description": "**${{ steps.parse_level.outputs.name }}** has been officially placed on the list!",
                    "fields": [
                      { "name": "Creator / Author", "value": "${{ steps.parse_level.outputs.author }}", "inline": true },
                      { "name": "Verifier", "value": "${{ steps.parse_level.outputs.verifier }}", "inline": true },
                      { "name": "Verification Proof", "value": "${{ steps.parse_level.outputs.video }}" }
                    ],
-                   "footer": { "text": "Enjoy playing this level! (or dont!)" }
+                   "footer": { "text": "Cloudflare Pages Site Updated Successfully" }
                  }]
                }' $DISCORD_WEBHOOK
+
+
