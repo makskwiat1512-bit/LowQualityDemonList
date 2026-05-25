@@ -48,6 +48,7 @@ jobs:
                -X POST \
                -d '{
                  "embeds": [{
+                 "content": "<@&1508176598078193775>",
                    "title": "New Demon Added to the List!",
                    "color": 15418782,
                    "description": " **${{ steps.parse_level.outputs.name }}** has been officially placed on the list!",
