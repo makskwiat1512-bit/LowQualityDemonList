@@ -1,22 +1,42 @@
-name: Merge
+name: Merge List Data
 
 on:
-  schedule: # Run every 3 hours
-  - cron: "0 0,3,6,9,12,15,18,21 * * *"
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  merge:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Merge main into production
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-python-version: '3.x'
+
+      - name: Compile List Data
+        run: |
+          if [ -f "build.py" ]; then
+            python build.py
+          elif [ -f "scripts/build.py" ]; then
+            python scripts/build.py
+          else
+            echo "Build script not found, skipping compilation step."
+          fi
+
+      - name: Commit and Push Changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git fetch --unshallow
-          git pull origin main
-          git checkout production
-          git pull origin production
-          git merge main --no-ff --no-edit
-          git push origin production
+          git add -A
+          if git diff-index --quiet HEAD --; then
+            echo "No changes to commit"
+          else
+            git commit -m "Automated list compilation [skip ci]"
+            git push origin main
+          fi
