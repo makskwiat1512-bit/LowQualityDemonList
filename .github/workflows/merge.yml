@@ -14,31 +14,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Auto-Compile Data Files
+      - name: Force Render Leaderboard Data
         run: |
-          if [ -f "build.py" ]; then
-            python build.py
-          elif [ -f "merge.py" ]; then
-            python merge.py
-          elif [ -f "index.js" ]; then
-            node index.js
-          elif [ -f "scripts/index.js" ]; then
-            node scripts/index.js
-          elif [ -f "package.json" ]; then
-            npm install && (npm run build || npm run compile || node index.js)
-          else
-            echo "Direct structural compilation check complete."
+          mkdir -p js
+          echo "const players = {};" > js/data.js
+          echo "export const list = [];" >> js/data.js
+          
+          if [ -d "scripts" ]; then
+            for f in scripts/*.js; do [ -e "$f" ] && node "$f"; done
           fi
+          
+          if [ -f "index.js" ]; then node index.js; fi
 
       - name: Commit and Push Changes
         run: |
@@ -48,6 +34,6 @@ jobs:
           if git diff-index --quiet HEAD --; then
             echo "No changes to commit"
           else
-            git commit -m "Automated leaderboard calculation [skip ci]"
+            git commit -m "Automated leaderboard fallback generation [skip ci]"
             git push origin main
           fi
